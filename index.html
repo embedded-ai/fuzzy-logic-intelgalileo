@@ -19,28 +19,138 @@
     </section>
 
     <section class="main-content">
-      <h1>
-<a id="fuzzy-logic-implements" class="anchor" href="#fuzzy-logic-implements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Fuzzy logic implements</h1>
+      <h2>
+<a id="fuzzy-logic-implements" class="anchor" href="#fuzzy-logic-implements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Fuzzy logic implements</h2>
 
-<h1>
-<a id="configuration" class="anchor" href="#configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuration</h1>
+<p>Implementation of fuzzy logic in Intel Galileo® platform by <a href="https://github.com/kalmik" class="user-mention">@kalmik</a>.</p>
+
+<h3>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h3>
 
 <ul>
-    <li>
-        AND operation uses MIN
-    </li>
-    <li>
-        OR operation uses MAX
-    </li>
-    <li>
-        IMPLICATION operation uses PRODUCT
-    </li>
-    <li>
-        AGGREGATION operation uses SUM
-    </li>
-    <li>
-        DEFUZZIFY operation uses CENTROID
-    </li>
+<li>FuzzyThread, running the fuzzy routine</li>
+<li>ServerThread, serving the fuzzy output on socket TCP</li>
+</ul>
+
+<h3>
+<a id="testing" class="anchor" href="#testing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Testing</h3>
+
+<h4>
+<a id="time-analysis" class="anchor" href="#time-analysis" aria-hidden="true"><span class="octicon octicon-link"></span></a>Time Analysis</h4>
+
+<p>fuzzy system with 7 membership functions ( MFS ) and 49 production rules and websockets server.</p>
+
+<p><img src="https://raw.githubusercontent.com/embedded-ai/fuzzy-logic-intelgalileo/master/C/benchmarks/outputs/timing-teste/7MFS-with-ws.png" alt="Timing Analysis"></p>
+
+<h4>
+<a id="graphical-comparison" class="anchor" href="#graphical-comparison" aria-hidden="true"><span class="octicon octicon-link"></span></a>Graphical comparison</h4>
+
+<p>With MATLAB® toolbox.
+<img src="https://raw.githubusercontent.com/embedded-ai/fuzzy-logic-intelgalileo/master/C/benchmarks/outputs/plots/comparativo1Matlab.png" alt="Timing Analysis">
+With C routine
+<img src="https://raw.githubusercontent.com/embedded-ai/fuzzy-logic-intelgalileo/master/C/benchmarks/outputs/plots/comparativo1Matlab.png" alt="Timing Analysis"></p>
+
+<h3>
+<a id="how-to-use" class="anchor" href="#how-to-use" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to use</h3>
+
+<h4>
+<a id="code-example" class="anchor" href="#code-example" aria-hidden="true"><span class="octicon octicon-link"></span></a>Code Example</h4>
+
+<ul>
+<li>
+<p>ADD MFS</p>
+
+<div class="highlight highlight-C"><pre><span class="pl-k">float</span> pGN[<span class="pl-c1">4</span>] = {-<span class="pl-c1">1</span>,-<span class="pl-c1">1</span>,-<span class="pl-c1">0.75</span>,-<span class="pl-c1">0.5</span>};
+<span class="pl-k">float</span> pMN[<span class="pl-c1">3</span>] = {-<span class="pl-c1">0.75</span>,-<span class="pl-c1">0.5</span>,-<span class="pl-c1">0.25</span>};
+<span class="pl-k">float</span> pPN[<span class="pl-c1">3</span>] = {-<span class="pl-c1">0.5</span>,-<span class="pl-c1">0.25</span>,<span class="pl-c1">0</span>};
+<span class="pl-k">float</span> pZZ[<span class="pl-c1">3</span>] = {-<span class="pl-c1">0.25</span>,<span class="pl-c1">0</span>,<span class="pl-c1">0.25</span>};
+<span class="pl-k">float</span> pPP[<span class="pl-c1">3</span>] = {<span class="pl-c1">0</span>,<span class="pl-c1">0.25</span>,<span class="pl-c1">0.5</span>};
+<span class="pl-k">float</span> pMP[<span class="pl-c1">3</span>] = {<span class="pl-c1">0.25</span>,<span class="pl-c1">0.5</span>,<span class="pl-c1">0.75</span>};
+<span class="pl-k">float</span> pGP[<span class="pl-c1">4</span>] = {<span class="pl-c1">0.5</span>,<span class="pl-c1">0.75</span>,<span class="pl-c1">1</span>,<span class="pl-c1">1</span>};
+
+pertinence GN = {&amp;pGN,<span class="pl-c1">4</span>};
+pertinence MN = {&amp;pMN,<span class="pl-c1">3</span>};
+pertinence PN = {&amp;pPN,<span class="pl-c1">3</span>};
+pertinence ZZ = {&amp;pZZ,<span class="pl-c1">3</span>};
+pertinence PP = {&amp;pPP,<span class="pl-c1">3</span>};
+pertinence MP = {&amp;pMP,<span class="pl-c1">3</span>};
+pertinence GP = {&amp;pGP,<span class="pl-c1">4</span>};</pre></div>
+</li>
+</ul>
+
+<ul>
+<li>
+<p>ADD Rule</p>
+
+<div class="highlight highlight-C"><pre>rule rules[<span class="pl-c1">49</span>] = {
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,GN),<span class="pl-c1">fuzzify</span>(ed,GN)), &amp;GN},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,GN),<span class="pl-c1">fuzzify</span>(ed,MN)), &amp;GN},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,GN),<span class="pl-c1">fuzzify</span>(ed,PN)), &amp;MN},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,GN),<span class="pl-c1">fuzzify</span>(ed,ZZ)), &amp;MN},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,GN),<span class="pl-c1">fuzzify</span>(ed,PP)), &amp;PN},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,GN),<span class="pl-c1">fuzzify</span>(ed,MP)), &amp;PN},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,GN),<span class="pl-c1">fuzzify</span>(ed,GP)), &amp;ZZ},
+
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,MN),<span class="pl-c1">fuzzify</span>(ed,GN)), &amp;GN},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,MN),<span class="pl-c1">fuzzify</span>(ed,MN)), &amp;MN},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,MN),<span class="pl-c1">fuzzify</span>(ed,PN)), &amp;MN},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,MN),<span class="pl-c1">fuzzify</span>(ed,ZZ)), &amp;PN},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,MN),<span class="pl-c1">fuzzify</span>(ed,PP)), &amp;PN},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,MN),<span class="pl-c1">fuzzify</span>(ed,MP)), &amp;ZZ},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,MN),<span class="pl-c1">fuzzify</span>(ed,GP)), &amp;PP},
+
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,PN),<span class="pl-c1">fuzzify</span>(ed,GN)), &amp;MN},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,PN),<span class="pl-c1">fuzzify</span>(ed,MN)), &amp;MN},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,PN),<span class="pl-c1">fuzzify</span>(ed,PN)), &amp;PN},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,PN),<span class="pl-c1">fuzzify</span>(ed,ZZ)), &amp;PN},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,PN),<span class="pl-c1">fuzzify</span>(ed,PP)), &amp;ZZ},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,PN),<span class="pl-c1">fuzzify</span>(ed,MP)), &amp;PP},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,PN),<span class="pl-c1">fuzzify</span>(ed,GP)), &amp;PP},
+
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,ZZ),<span class="pl-c1">fuzzify</span>(ed,GN)), &amp;MN},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,ZZ),<span class="pl-c1">fuzzify</span>(ed,MN)), &amp;PN},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,ZZ),<span class="pl-c1">fuzzify</span>(ed,PN)), &amp;PN},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,ZZ),<span class="pl-c1">fuzzify</span>(ed,ZZ)), &amp;ZZ},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,ZZ),<span class="pl-c1">fuzzify</span>(ed,PP)), &amp;PP},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,ZZ),<span class="pl-c1">fuzzify</span>(ed,MP)), &amp;PP},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,ZZ),<span class="pl-c1">fuzzify</span>(ed,GP)), &amp;MP},
+
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,PP),<span class="pl-c1">fuzzify</span>(ed,GN)), &amp;PN},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,PP),<span class="pl-c1">fuzzify</span>(ed,MN)), &amp;PN},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,PP),<span class="pl-c1">fuzzify</span>(ed,PN)), &amp;ZZ},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,PP),<span class="pl-c1">fuzzify</span>(ed,ZZ)), &amp;PP},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,PP),<span class="pl-c1">fuzzify</span>(ed,PP)), &amp;PP},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,PP),<span class="pl-c1">fuzzify</span>(ed,MP)), &amp;MP},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,PP),<span class="pl-c1">fuzzify</span>(ed,GP)), &amp;MP},
+
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,MP),<span class="pl-c1">fuzzify</span>(ed,GN)), &amp;PN},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,MP),<span class="pl-c1">fuzzify</span>(ed,MN)), &amp;ZZ},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,MP),<span class="pl-c1">fuzzify</span>(ed,PN)), &amp;PP},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,MP),<span class="pl-c1">fuzzify</span>(ed,ZZ)), &amp;PP},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,MP),<span class="pl-c1">fuzzify</span>(ed,PP)), &amp;MP},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,MP),<span class="pl-c1">fuzzify</span>(ed,MP)), &amp;MP},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,MP),<span class="pl-c1">fuzzify</span>(ed,GP)), &amp;GP},
+
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,GP),<span class="pl-c1">fuzzify</span>(ed,GN)), &amp;ZZ},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,GP),<span class="pl-c1">fuzzify</span>(ed,MN)), &amp;PP},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,GP),<span class="pl-c1">fuzzify</span>(ed,PN)), &amp;PP},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,GP),<span class="pl-c1">fuzzify</span>(ed,ZZ)), &amp;MP},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,GP),<span class="pl-c1">fuzzify</span>(ed,PP)), &amp;MP},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,GP),<span class="pl-c1">fuzzify</span>(ed,MP)), &amp;GP},
+{<span class="pl-c1">andOp</span>(<span class="pl-c1">fuzzify</span>(e,GP),<span class="pl-c1">fuzzify</span>(ed,GP)), &amp;GP}
+};</pre></div>
+</li>
+</ul>
+
+<h3>
+<a id="settings" class="anchor" href="#settings" aria-hidden="true"><span class="octicon octicon-link"></span></a>Settings</h3>
+
+<ul>
+<li>AND operation uses MIN</li>
+<li>OR operation uses MAX</li>
+<li>IMPLICATION operation uses PRODUCT</li>
+<li>AGGREGATION operation uses SUM</li>
+<li>DEFUZZIFY operation uses CENTROID</li>
 </ul>
 
       <footer class="site-footer">
